@@ -1,0 +1,173 @@
+[
+  {
+    "name": "Samsung Galaxy S22",
+    "description": "Flagship Android smartphone with a 120Hz display",
+    "price": 899.99,
+    "category": "Electronics",
+    "brand": "Samsung",
+    "stock_quantity": 50,
+    "image_url": "https://example.com/s22.jpg"
+  },
+  {
+    "name": "Apple MacBook Air M2",
+    "description": "Thin and lightweight laptop with M2 chip",
+    "price": 1199.99,
+    "category": "Laptops",
+    "brand": "Apple",
+    "stock_quantity": 30,
+    "image_url": "https://example.com/macbook_air_m2.jpg"
+  },
+  {
+    "name": "Sony WH-1000XM5",
+    "description": "Noise-canceling wireless headphones",
+    "price": 349.99,
+    "category": "Accessories",
+    "brand": "Sony",
+    "stock_quantity": 75,
+    "image_url": "https://example.com/wh1000xm5.jpg"
+  },
+  {
+    "name": "Nike Air Max 270",
+    "description": "Stylish and comfortable sneakers",
+    "price": 149.99,
+    "category": "Footwear",
+    "brand": "Nike",
+    "stock_quantity": 100,
+    "image_url": "https://example.com/airmax270.jpg"
+  },
+  {
+    "name": "Samsung 55-inch 4K TV",
+    "description": "Smart TV with ultra HD display",
+    "price": 699.99,
+    "category": "Electronics",
+    "brand": "Samsung",
+    "stock_quantity": 25,
+    "image_url": "https://example.com/samsung_4k_tv.jpg"
+  },
+  {
+    "name": "Adidas Ultraboost 22",
+    "description": "High-performance running shoes",
+    "price": 180.00,
+    "category": "Footwear",
+    "brand": "Adidas",
+    "stock_quantity": 60,
+    "image_url": "https://example.com/ultraboost22.jpg"
+  },
+  {
+    "name": "Canon EOS R5",
+    "description": "Mirrorless camera with 8K video recording",
+    "price": 3899.99,
+    "category": "Cameras",
+    "brand": "Canon",
+    "stock_quantity": 10,
+    "image_url": "https://example.com/eos_r5.jpg"
+  },
+  {
+    "name": "HP Spectre x360",
+    "description": "2-in-1 convertible laptop",
+    "price": 1399.99,
+    "category": "Laptops",
+    "brand": "HP",
+    "stock_quantity": 40,
+    "image_url": "https://example.com/spectre_x360.jpg"
+  },
+  {
+    "name": "JBL Charge 5",
+    "description": "Portable waterproof Bluetooth speaker",
+    "price": 179.99,
+    "category": "Accessories",
+    "brand": "JBL",
+    "stock_quantity": 85,
+    "image_url": "https://example.com/charge5.jpg"
+  },
+  {
+    "name": "Dyson V15 Detect",
+    "description": "Powerful cordless vacuum cleaner",
+    "price": 699.99,
+    "category": "Home Appliances",
+    "brand": "Dyson",
+    "stock_quantity": 35,
+    "image_url": "https://example.com/v15_detect.jpg"
+  },
+  {
+    "name": "PlayStation 5",
+    "description": "Next-gen gaming console with ultra-fast SSD",
+    "price": 499.99,
+    "category": "Gaming",
+    "brand": "Sony",
+    "stock_quantity": 20,
+    "image_url": "https://example.com/ps5.jpg"
+  },
+  {
+    "name": "Logitech MX Master 3",
+    "description": "Advanced ergonomic wireless mouse",
+    "price": 99.99,
+    "category": "Accessories",
+    "brand": "Logitech",
+    "stock_quantity": 95,
+    "image_url": "https://example.com/mxmaster3.jpg"
+  },
+  {
+    "name": "Bose SoundLink Revolve+",
+    "description": "Portable Bluetooth speaker with 360-degree sound",
+    "price": 299.99,
+    "category": "Accessories",
+    "brand": "Bose",
+    "stock_quantity": 50,
+    "image_url": "https://example.com/soundlink.jpg"
+  },
+  {
+    "name": "Apple Watch Series 8",
+    "description": "Advanced health-tracking smartwatch",
+    "price": 399.99,
+    "category": "Wearables",
+    "brand": "Apple",
+    "stock_quantity": 60,
+    "image_url": "https://example.com/applewatch8.jpg"
+  },
+  {
+    "name": "Razer BlackWidow V4",
+    "description": "RGB mechanical gaming keyboard",
+    "price": 179.99,
+    "category": "Gaming",
+    "brand": "Razer",
+    "stock_quantity": 70,
+    "image_url": "https://example.com/blackwidow_v4.jpg"
+  },
+  {
+    "name": "GoPro Hero 11 Black",
+    "description": "Action camera with 5.3K video recording",
+    "price": 499.99,
+    "category": "Cameras",
+    "brand": "GoPro",
+    "stock_quantity": 45,
+    "image_url": "https://example.com/gopro_hero11.jpg"
+  },
+  {
+    "name": "Dell XPS 15",
+    "description": "Powerful laptop with 4K OLED display",
+    "price": 1999.99,
+    "category": "Laptops",
+    "brand": "Dell",
+    "stock_quantity": 25,
+    "image_url": "https://example.com/xps15.jpg"
+  },
+  {
+    "name": "Samsung Galaxy Watch 5",
+    "description": "Smartwatch with health monitoring features",
+    "price": 299.99,
+    "category": "Wearables",
+    "brand": "Samsung",
+    "stock_quantity": 55,
+    "image_url": "https://example.com/galaxy_watch5.jpg"
+  },
+  {
+    "name": "LG C2 OLED TV",
+    "description": "High-end OLED TV with Dolby Vision",
+    "price": 1299.99,
+    "category": "Electronics",
+    "brand": "LG",
+    "stock_quantity": 15,
+    "image_url": "https://example.com/lg_c2_oled.jpg"
+  }
+]
