@@ -43,7 +43,7 @@ const getCart = async (req, res) => {
   }
 };
 
-// ✅ Remove Product from Cart
+//  Remove Product from Cart
 const removeFromCart = async (req, res) => {
   const userId = req.user.id;
   const { productId } = req.params;
@@ -85,7 +85,7 @@ const updateCartQuantity = async (req, res) => {
   }
 };
 
-// ✅ Clear Entire Cart
+// Clear Entire Cart
 const clearCart = async (req, res) => {
   const userId = req.user.id;
 
