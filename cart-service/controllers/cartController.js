@@ -43,4 +43,63 @@ const getCart = async (req, res) => {
   }
 };
 
-module.exports = { addToCart, getCart };
+// ✅ Remove Product from Cart
+const removeFromCart = async (req, res) => {
+  const userId = req.user.id;
+  const { productId } = req.params;
+
+  try {
+    let cart = await Cart.findOne({ userId });
+    if (!cart) return res.status(404).json({ message: "Cart not found" });
+
+    cart.items = cart.items.filter(item => item.productId !== productId);
+    await cart.save();
+
+    res.status(200).json({ message: "Product removed from cart", cart });
+  } catch (error) {
+    res.status(500).json({ message: "Error removing product", error: error.message });
+  }
+};
+
+// ✅ Update Quantity in Cart
+const updateCartQuantity = async (req, res) => {
+  const userId = req.user.id;
+  const { productId } = req.params;
+  const { quantity } = req.body;
+
+  if (quantity <= 0) return res.status(400).json({ message: "Quantity must be greater than 0" });
+
+  try {
+    let cart = await Cart.findOne({ userId });
+    if (!cart) return res.status(404).json({ message: "Cart not found" });
+
+    const item = cart.items.find(item => item.productId === productId);
+    if (!item) return res.status(404).json({ message: "Product not in cart" });
+
+    item.quantity = quantity;
+    await cart.save();
+
+    res.status(200).json({ message: "Cart updated", cart });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating cart", error: error.message });
+  }
+};
+
+// ✅ Clear Entire Cart
+const clearCart = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    let cart = await Cart.findOne({ userId });
+    if (!cart) return res.status(404).json({ message: "Cart not found" });
+
+    cart.items = [];
+    await cart.save();
+
+    res.status(200).json({ message: "Cart cleared successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error clearing cart", error: error.message });
+  }
+};
+
+module.exports = { addToCart, getCart ,removeFromCart, updateCartQuantity, clearCart };
