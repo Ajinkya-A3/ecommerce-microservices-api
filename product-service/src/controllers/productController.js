@@ -1,5 +1,6 @@
 const Product = require("../models/productModel");
 
+
 // @desc Get all products with filtering & sorting
 exports.getProducts = async (req, res) => {
   try {
@@ -71,3 +72,52 @@ exports.deleteProduct = async (req, res) => {
     res.status(500).json({ message: "Error deleting product", error });
   }
 };
+
+
+// Deduct stock quantity when a product is purchased
+exports.deductStock = async (req, res) => {
+  try {
+      const { productId, quantity } = req.body;
+
+      if (!productId || !quantity || quantity <= 0) {
+          return res.status(400).json({ error: "Invalid product ID or quantity" });
+      }
+
+      const product = await Product.findById(productId);
+      if (!product) return res.status(404).json({ error: "Product not found" });
+
+      if (product.stock_quantity < quantity) {
+          return res.status(400).json({ error: "Insufficient stock" });
+      }
+
+      product.stock_quantity -= quantity;
+      await product.save();
+
+      res.json({ message: "Stock deducted successfully", product });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+// Add stock to the product inventory
+exports.addStock = async (req, res) => {
+  try {
+      const { productId, quantity } = req.body;
+
+      if (!productId || !quantity || quantity <= 0) {
+          return res.status(400).json({ error: "Invalid product ID or quantity" });
+      }
+
+      const product = await Product.findById(productId);
+      if (!product) return res.status(404).json({ error: "Product not found" });
+
+      product.stock_quantity += quantity;
+      await product.save();
+
+      res.json({ message: "Stock added successfully", product });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+
