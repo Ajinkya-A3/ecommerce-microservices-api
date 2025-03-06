@@ -85,6 +85,7 @@ const updateCartQuantity = async (req, res) => {
   }
 };
 
+
 // Clear Entire Cart
 const clearCart = async (req, res) => {
   const userId = req.user.id;
@@ -102,4 +103,30 @@ const clearCart = async (req, res) => {
   }
 };
 
-module.exports = { addToCart, getCart ,removeFromCart, updateCartQuantity, clearCart };
+
+//  Remove Ordered Items from User's Cart
+const removeOrderedItems = async (req, res) => {
+  const { userId } = req.params; // Extract userId from request params
+  const { orderedItems } = req.body; // Array of ordered product IDs
+
+  if (!orderedItems || !Array.isArray(orderedItems)) {
+    return res.status(400).json({ message: "Invalid request data" });
+  }
+
+  try {
+    let cart = await Cart.findOne({ userId });
+
+    if (!cart) return res.status(404).json({ message: "Cart not found" });
+
+    // Remove ordered products from cart
+    cart.items = cart.items.filter(item => !orderedItems.includes(item.productId));
+
+    await cart.save();
+
+    res.status(200).json({ message: "Ordered items removed", cart });
+  } catch (error) {
+    res.status(500).json({ message: "Error removing ordered items", error: error.message });
+  }
+};
+
+module.exports = { addToCart, getCart ,removeFromCart, updateCartQuantity, clearCart, removeOrderedItems };

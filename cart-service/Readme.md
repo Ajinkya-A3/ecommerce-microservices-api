@@ -144,3 +144,24 @@ Edit
     ]
   }
 }
+
+1️⃣ Method:
+
+bash
+Copy
+Edit
+PUT http://localhost:5003/cart/remove-items/67bc564ea2ff5fb7f2f50eeb
+2️⃣ Headers:
+
+pgsql
+Copy
+Edit
+Content-Type: application/json
+3️⃣ Body:
+
+json
+Copy
+Edit
+{
+   "orderedItems": ["65dfd8a79c1a2f001f3c9876"]
+}
