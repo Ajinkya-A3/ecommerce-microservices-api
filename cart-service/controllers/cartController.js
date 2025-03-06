@@ -106,27 +106,44 @@ const clearCart = async (req, res) => {
 
 //  Remove Ordered Items from User's Cart
 const removeOrderedItems = async (req, res) => {
-  const { userId } = req.params; // Extract userId from request params
-  const { orderedItems } = req.body; // Array of ordered product IDs
+  const { userId } = req.params;
+  const { orderedItems, quantity } = req.body;
 
-  if (!orderedItems || !Array.isArray(orderedItems)) {
-    return res.status(400).json({ message: "Invalid request data" });
+  console.log("Received userId:", userId);
+  console.log("Received orderedItems:", orderedItems);
+  console.log("Received quantity:", quantity);
+
+  // ✅ Ensure orderedItems exists and is an array, and quantity is a valid number
+  if (!orderedItems || !Array.isArray(orderedItems) || !quantity || typeof quantity !== "number") {
+      console.log("Invalid request body:", req.body);
+      return res.status(400).json({ message: "Invalid request data: orderedItems must be an array and quantity must be a number" });
   }
 
   try {
-    let cart = await Cart.findOne({ userId });
+      let cart = await Cart.findOne({ userId });
 
-    if (!cart) return res.status(404).json({ message: "Cart not found" });
+      if (!cart) return res.status(404).json({ message: "Cart not found" });
 
-    // Remove ordered products from cart
-    cart.items = cart.items.filter(item => !orderedItems.includes(item.productId));
+      // ✅ Remove items based on quantity
+      cart.items = cart.items.map(item => {
+          if (orderedItems.includes(item.productId)) {
+              if (item.quantity > quantity) {
+                  // Reduce the quantity
+                  item.quantity -= quantity;
+                  return item;
+              } else {
+                  // Remove item if quantity is equal or less
+                  return null;
+              }
+          }
+          return item;
+      }).filter(Boolean); // Remove null values (fully removed items)
 
-    await cart.save();
+      await cart.save();
 
-    res.status(200).json({ message: "Ordered items removed", cart });
+      res.status(200).json({ message: "Ordered items updated", cart });
   } catch (error) {
-    res.status(500).json({ message: "Error removing ordered items", error: error.message });
+      res.status(500).json({ message: "Error updating cart", error: error.message });
   }
 };
-
 module.exports = { addToCart, getCart ,removeFromCart, updateCartQuantity, clearCart, removeOrderedItems };
