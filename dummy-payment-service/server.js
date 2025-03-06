@@ -6,7 +6,14 @@ app.use(express.json());
 // Dummy Payment API - Always returns success
 app.post("/api/payment", (req, res) => {
     return res.status(200).json({
-        status: "success" // Ensures payment is always successful
+        status: "success" // Payment always succeeds
+    });
+});
+
+// Dummy Refund API - Always returns success
+app.post("/api/refund", (req, res) => {
+    return res.status(200).json({
+        status: "success" // Refund always succeeds
     });
 });
 
