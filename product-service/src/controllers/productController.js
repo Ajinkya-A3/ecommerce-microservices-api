@@ -2,9 +2,16 @@ const Product = require("../models/productModel");
 
 
 // @desc Get all products with filtering & sorting
+// @desc Get all products with filtering, sorting, and pagination
 exports.getProducts = async (req, res) => {
   try {
-    let { name, category, brand, minPrice, maxPrice, sortBy, order } = req.query;
+    let { name, category, brand, minPrice, maxPrice, sortBy, order, page = 1, limit = 10 } = req.query;
+
+    // Convert page and limit to numbers
+    page = parseInt(page);
+    limit = parseInt(limit);
+
+    // Create filter object
     let filter = {};
 
     if (name) filter.name = new RegExp(name, "i");  // Case-insensitive search
@@ -16,14 +23,28 @@ exports.getProducts = async (req, res) => {
       if (maxPrice) filter.price.$lte = parseFloat(maxPrice);
     }
 
+    // Sorting
     let sort = {};
     if (sortBy) {
       order = order === "desc" ? -1 : 1;
       sort[sortBy] = order;
     }
 
-    const products = await Product.find(filter).sort(sort);
-    res.status(200).json(products);
+    // Fetch products with pagination
+    const products = await Product.find(filter)
+      .sort(sort)
+      .skip((page - 1) * limit)  // Skip the documents for the current page
+      .limit(limit);  // Limit the number of products per page
+
+    // Get total count of products for pagination purposes
+    const totalCount = await Product.countDocuments(filter);
+
+    res.status(200).json({
+      products,
+      totalCount,
+      page,
+      totalPages: Math.ceil(totalCount / limit),  // Calculate total pages
+    });
   } catch (error) {
     res.status(500).json({ message: "Error fetching products", error });
   }
