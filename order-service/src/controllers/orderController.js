@@ -23,7 +23,7 @@ async function placeOrder(req, res) {
                 headers: { Authorization: req.headers.authorization }
             });
 
-            if (!cartResponse.data || !cartResponse.data.items) {
+            if (!cartResponse.data || !cartResponse.data.cartItems) {
                 throw new Error("Cart Service returned empty response");
             }
         } catch (err) {
@@ -31,7 +31,7 @@ async function placeOrder(req, res) {
             return res.status(500).json({ success: false, message: "Cart Service is unavailable" });
         }
 
-        const cartItems = cartResponse.data.items;
+        const cartItems = cartResponse.data.cartItems;
         if (cartItems.length === 0) {
             return res.status(400).json({ success: false, message: "Cart is empty" });
         }
@@ -55,9 +55,15 @@ async function placeOrder(req, res) {
 
                 const price = product.price;
                 const itemTotalPrice = price * quantity;
-                totalAmount += itemTotalPrice;
+                totalAmount = parseFloat((totalAmount + itemTotalPrice).toFixed(2)); // ✅ Fix floating-point issue
 
-                orderedItems.push({ productId, quantity, price });
+                orderedItems.push({ 
+                    productId, 
+                    quantity, 
+                    price, 
+                    productName: product.name,  // ✅ Store product name
+                    productImage: product.image // ✅ Store product image URL
+                });
             } catch (error) {
                 console.error(`❌ Failed to fetch product ${productId}:`, error.message);
                 return res.status(500).json({ success: false, message: `Product Service is unavailable` });

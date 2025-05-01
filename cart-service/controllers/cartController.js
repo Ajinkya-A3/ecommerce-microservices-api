@@ -5,29 +5,43 @@ const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL;
 
 // Add product to cart
 const addToCart = async (req, res) => {
-  const userId = req.user.id; // Extracted from JWT
-  const { productId } = req.body;
+  const userId = req.user.id;
+  const { productId, quantity } = req.body;
 
   try {
-    // Step 1: Validate product via Product Service
-    const productResponse = await axios.get(`${PRODUCT_SERVICE_URL}/${productId}`);
-    if (!productResponse.data) return res.status(404).json({ message: "Product not found" });
+    // 🔍 Get product info from Product Service
+    const { data: product } = await axios.get(`${process.env.PRODUCT_SERVICE_URL}/${productId}`);
+    const unitPrice = parseFloat(product.price);
 
-    // Step 2: Find or create cart for the user
-    let cart = await Cart.findOne({ userId });
-    if (!cart) cart = new Cart({ userId, items: [] });
-
-    // Step 3: Check if product already exists in cart
-    const existingItem = cart.items.find(item => item.productId === productId);
-    if (existingItem) {
-      existingItem.quantity += 1;
-    } else {
-      cart.items.push({ productId, quantity: 1 });
+    if (!unitPrice || isNaN(unitPrice)) {
+      return res.status(400).json({ message: "Invalid product price" });
     }
 
-    // Step 4: Save cart
+    let cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+      cart = new Cart({ userId, items: [] });
+    }
+
+    const existingItem = cart.items.find(item => item.productId === productId);
+
+    if (existingItem) {
+      existingItem.quantity += quantity;
+      existingItem.price = parseFloat((unitPrice * existingItem.quantity).toFixed(2));
+    } else {
+      cart.items.push({
+        productId,
+        name: product.name,
+        image: product.image,
+        description: product.description,
+        quantity,
+        price: parseFloat((unitPrice * quantity).toFixed(2))
+      });
+    }
+
     await cart.save();
-    res.status(200).json(cart);
+    res.status(200).json({ message: "Product added to cart", cart });
+
   } catch (error) {
     res.status(500).json({ message: "Error adding to cart", error: error.message });
   }
@@ -147,32 +161,4 @@ const removeOrderedItems = async (req, res) => {
   }
 };
 
-const removeSingleProduct = async (req, res) => {
-  const userId = req.user.id; // Extracted from JWT by auth middleware
-  const { productId } = req.params;
-
-  try {
-      const cart = await Cart.findOne({ userId });
-
-      if (!cart) {
-          return res.status(404).json({ message: "Cart not found" });
-      }
-
-      const originalLength = cart.items.length;
-
-      // Remove item from cart
-      cart.items = cart.items.filter(item => item.productId !== productId);
-
-      if (cart.items.length === originalLength) {
-          return res.status(404).json({ message: "Product not found in cart" });
-      }
-
-      await cart.save();
-
-      res.status(200).json({ message: "Product removed from cart", cart });
-  } catch (error) {
-      res.status(500).json({ message: "Failed to remove product", error: error.message });
-  }
-};
-
-module.exports = { addToCart, getCart ,removeFromCart, updateCartQuantity, clearCart, removeOrderedItems , removeSingleProduct };
+module.exports = { addToCart, getCart ,removeFromCart, updateCartQuantity, clearCart, removeOrderedItems  };

@@ -36,7 +36,8 @@ json
 Copy
 Edit
 {
-  "productId": "your_product_id_here"
+  "productId": "your_product_id_here",
+  "quantity": 1
 }
 Response:
 json
