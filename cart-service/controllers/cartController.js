@@ -146,4 +146,33 @@ const removeOrderedItems = async (req, res) => {
       res.status(500).json({ message: "Error updating cart", error: error.message });
   }
 };
-module.exports = { addToCart, getCart ,removeFromCart, updateCartQuantity, clearCart, removeOrderedItems };
+
+const removeSingleProduct = async (req, res) => {
+  const userId = req.user.id; // Extracted from JWT by auth middleware
+  const { productId } = req.params;
+
+  try {
+      const cart = await Cart.findOne({ userId });
+
+      if (!cart) {
+          return res.status(404).json({ message: "Cart not found" });
+      }
+
+      const originalLength = cart.items.length;
+
+      // Remove item from cart
+      cart.items = cart.items.filter(item => item.productId !== productId);
+
+      if (cart.items.length === originalLength) {
+          return res.status(404).json({ message: "Product not found in cart" });
+      }
+
+      await cart.save();
+
+      res.status(200).json({ message: "Product removed from cart", cart });
+  } catch (error) {
+      res.status(500).json({ message: "Failed to remove product", error: error.message });
+  }
+};
+
+module.exports = { addToCart, getCart ,removeFromCart, updateCartQuantity, clearCart, removeOrderedItems , removeSingleProduct };
