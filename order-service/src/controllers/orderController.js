@@ -17,7 +17,7 @@ async function placeOrder(req, res) {
         // 🛒 Fetch user's cart
         let cartResponse;
         try {
-            const cartUrl = `${process.env.CART_SERVICE_URL}/api/cart/`;
+            const cartUrl = `${process.env.CART_SERVICE_URL}`;
             console.log(`📤 Fetching cart from: ${cartUrl}`);
 
             cartResponse = await axios.get(cartUrl, {
@@ -70,7 +70,7 @@ async function placeOrder(req, res) {
 
         // 💳 Payment
         try {
-            const paymentResponse = await axios.post(`${process.env.PAYMENT_SERVICE_URL}/api/payment`, {
+            const paymentResponse = await axios.post(`${process.env.PAYMENT_SERVICE_URL}`, {
                 userId,
                 amount: totalAmount,
                 orderId: newOrder._id,
@@ -91,7 +91,7 @@ async function placeOrder(req, res) {
         console.log("📉 Deducting stock...");
         for (const item of orderedItems) {
             try {
-                await axios.put(`${process.env.PRODUCT_SERVICE_URL}/api/products/deduct-stock`, {
+                await axios.put(`${process.env.PRODUCT_SERVICE_URL}/deduct-stock`, {
                     productId: item.productId,
                     quantity: item.quantity,
                 });
@@ -103,7 +103,7 @@ async function placeOrder(req, res) {
 
         // 🧹 Clear the cart using DELETE /clear
         try {
-            const clearCartResponse = await axios.delete(`${process.env.CART_SERVICE_URL}/api/cart/clear`, {
+            const clearCartResponse = await axios.delete(`${process.env.CART_SERVICE_URL}/clear`, {
                 headers: { Authorization: req.headers.authorization }
             });
 
@@ -164,7 +164,7 @@ async function placeSingleProductOrder(req, res) {
         }
 
         // 🛍 Fetch product details
-        const productResponse = await axios.get(`${process.env.PRODUCT_SERVICE_URL}/api/products/${productId}`);
+        const productResponse = await axios.get(`${process.env.PRODUCT_SERVICE_URL}/${productId}`);
         const product = productResponse.data.product || productResponse.data;
 
         console.log("🔍 Product fetched:", product);
@@ -194,7 +194,7 @@ async function placeSingleProductOrder(req, res) {
         console.log("📝 Order created:", newOrder._id);
 
         // 💳 Payment
-        const paymentResponse = await axios.post(`${process.env.PAYMENT_SERVICE_URL}/api/payment`, {
+        const paymentResponse = await axios.post(`${process.env.PAYMENT_SERVICE_URL}`, {
             userId,
             amount: totalAmount,
             orderId: newOrder._id
@@ -207,7 +207,7 @@ async function placeSingleProductOrder(req, res) {
         console.log("💳 Payment successful");
 
         // 📉 Deduct stock
-        await axios.put(`${process.env.PRODUCT_SERVICE_URL}/api/products/deduct-stock`, {
+        await axios.put(`${process.env.PRODUCT_SERVICE_URL}/deduct-stock`, {
             productId,
             quantity
         });
@@ -223,7 +223,7 @@ async function placeSingleProductOrder(req, res) {
             });
 
             // Send request to Cart Service to remove the item by passing the productId in the URL
-            const cartResponse = await axios.delete(`${process.env.CART_SERVICE_URL}/api/cart/remove/${productId}`, {
+            const cartResponse = await axios.delete(`${process.env.CART_SERVICE_URL}/remove/${productId}`, {
                 headers: { Authorization: req.headers.authorization }
             });
 
