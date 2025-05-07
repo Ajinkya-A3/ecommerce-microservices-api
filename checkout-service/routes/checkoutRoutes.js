@@ -1,7 +1,7 @@
 // routes/checkoutRoutes.js
 const express = require("express");
 const router = express.Router();
-const { placeOrder, getOrders} = require("../controllers/checkoutController");
+const { placeOrder, getOrders, placeSingleProductOrder} = require("../controllers/checkoutController");
 const authenticate = require("../middleware/auth");
 
 router.post("/", authenticate, placeOrder);
