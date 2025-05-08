@@ -6,12 +6,16 @@ const {
   updateProduct, 
   deleteProduct,
   deductStock,
-  addStock 
+  addStock,
+  getLowStockProducts // Import the low stock function
 } = require("../controllers/productController");
 
 const router = express.Router();
 
-// Product Routes
+// Move the /low-stock route to the top to avoid route conflicts
+router.get("/low-stock", getLowStockProducts); // Fetch low stock products
+
+// Other Product Routes
 router.get("/", getProducts);  // List all products with filtering & sorting
 router.post("/", createProduct);  // Create a new product
 router.put("/deduct-stock", deductStock);  // Deduct stock

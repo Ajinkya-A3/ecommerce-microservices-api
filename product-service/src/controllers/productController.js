@@ -141,4 +141,20 @@ exports.addStock = async (req, res) => {
   }
 };
 
+// @desc Get products with stock less than or equal to 20
+// @route GET /api/products/low-stock
+exports.getLowStockProducts = async (req, res) => {
+  try {
+    // Fetch products with stock less than or equal to 20
+    const lowStockProducts = await Product.find({ stock_quantity: { $lte: 20 } });
 
+    res.status(200).json({
+      message: "Low stock products (<= 20)",
+      count: lowStockProducts.length,
+      products: lowStockProducts,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching low stock products", error });
+    console.log(error)
+  }
+};
