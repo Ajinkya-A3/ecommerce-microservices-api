@@ -274,10 +274,62 @@ const updateShippingStatusPublic = async (req, res) => {
 };
 
 
+const getMonthlyStats = async (req, res) => {
+    try {
+        const now = new Date();
+        const currentMonth = now.getMonth() + 1; // JavaScript months are 0-based
+        const currentYear = now.getFullYear();
+        const previousMonth = currentMonth === 1 ? 12 : currentMonth - 1; // If January, previous month is December
+        const previousYear = currentMonth === 1 ? currentYear - 1 : currentYear;
+
+        const stats = await Checkout.aggregate([
+            {
+                $addFields: {
+                    month: { $month: "$createdAt" },
+                    year: { $year: "$createdAt" }
+                }
+            },
+            {
+                $match: {
+                    $or: [
+                        // Include current month
+                        { year: currentYear, month: currentMonth },
+                        // Include previous month
+                        { year: previousYear, month: previousMonth }
+                    ]
+                }
+            },
+            {
+                $group: {
+                    _id: { year: "$year", month: "$month" },
+                    totalOrders: { $sum: 1 },
+                    totalRevenue: { $sum: "$totalAmount" },
+                    totalProductsSold: {
+                        $sum: {
+                            $sum: "$items.quantity"
+                        }
+                    }
+                }
+            },
+            {
+                $sort: { "_id.year": -1, "_id.month": -1 } // Sort by most recent month first
+            }
+        ]);
+
+        return res.status(200).json({ success: true, stats });
+    } catch (err) {
+        console.error("❌ Error in getMonthlyStats:", err.message);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};
+
+
+
 module.exports = {
     placeOrder,
     getOrders,
     placeSingleProductOrder,
     getAllOrdersPublic,
-    updateShippingStatusPublic
+    updateShippingStatusPublic,
+    getMonthlyStats
 };
