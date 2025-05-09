@@ -216,8 +216,20 @@ const placeSingleProductOrder = async (req, res) => {
     }
 };
 
+const getAllOrdersPublic = async (req, res) => {
+    try {
+        const orders = await Checkout.find().sort({ createdAt: -1 }); // Optional: Sort newest first
+        return res.status(200).json({ success: true, orders });
+    } catch (err) {
+        console.error("❌ Error fetching all orders:", err.message);
+        return res.status(500).json({ success: false, message: "Failed to fetch all orders" });
+    }
+};
+
+
 module.exports = {
     placeOrder,
     getOrders,
-    placeSingleProductOrder
+    placeSingleProductOrder,
+    getAllOrdersPublic
 };
