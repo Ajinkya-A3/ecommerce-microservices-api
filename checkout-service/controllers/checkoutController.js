@@ -226,10 +226,58 @@ const getAllOrdersPublic = async (req, res) => {
     }
 };
 
+const updateShippingStatusPublic = async (req, res) => {
+    try {
+        const { orderId, shippingStatus } = req.body;
+
+        if (!orderId || !shippingStatus) {
+            return res.status(400).json({
+                success: false,
+                message: "Order ID and shipping status are required"
+            });
+        }
+
+        const validStatuses = ["Pending", "Shipped", "Delivered"];
+        if (!validStatuses.includes(shippingStatus)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid shipping status"
+            });
+        }
+
+        const updatedOrder = await Checkout.findByIdAndUpdate(
+            orderId,
+            { shippingStatus },
+            { new: true }
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).json({
+                success: false,
+                message: "Order not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Shipping status updated",
+            order: updatedOrder
+        });
+
+    } catch (err) {
+        console.error("❌ Error updating shipping status:", err.message);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+    }
+};
+
 
 module.exports = {
     placeOrder,
     getOrders,
     placeSingleProductOrder,
-    getAllOrdersPublic
+    getAllOrdersPublic,
+    updateShippingStatusPublic
 };
