@@ -9,8 +9,11 @@ const addToCart = async (req, res) => {
   const { productId, quantity } = req.body;
 
   try {
-    // 🔍 Get product info from Product Service
+    // 🔍 Fetch product details from Product Service
     const { data: product } = await axios.get(`${process.env.PRODUCT_SERVICE_URL}/${productId}`);
+
+    console.log('Product data from Product Service:', product);  // Log product to inspect its fields
+
     const unitPrice = parseFloat(product.price);
 
     if (!unitPrice || isNaN(unitPrice)) {
@@ -28,11 +31,14 @@ const addToCart = async (req, res) => {
     if (existingItem) {
       existingItem.quantity += quantity;
       existingItem.price = parseFloat((unitPrice * existingItem.quantity).toFixed(2));
+      existingItem.image = product.image_url;  // Use correct image URL field
+      existingItem.name = product.name;
+      existingItem.description = product.description;
     } else {
       cart.items.push({
         productId,
         name: product.name,
-        image: product.image,
+        image: product.image_url,  // Use correct image URL field
         description: product.description,
         quantity,
         price: parseFloat((unitPrice * quantity).toFixed(2))
@@ -46,6 +52,7 @@ const addToCart = async (req, res) => {
     res.status(500).json({ message: "Error adding to cart", error: error.message });
   }
 };
+
 
 // Get cart items
 const getCart = async (req, res) => {
@@ -76,28 +83,46 @@ const removeFromCart = async (req, res) => {
 };
 
 // ✅ Update Quantity in Cart
+
 const updateCartQuantity = async (req, res) => {
   const userId = req.user.id;
   const { productId } = req.params;
   const { quantity } = req.body;
 
-  if (quantity <= 0) return res.status(400).json({ message: "Quantity must be greater than 0" });
+  if (quantity <= 0) {
+    return res.status(400).json({ message: "Quantity must be greater than 0" });
+  }
 
   try {
     let cart = await Cart.findOne({ userId });
-    if (!cart) return res.status(404).json({ message: "Cart not found" });
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
 
     const item = cart.items.find(item => item.productId === productId);
-    if (!item) return res.status(404).json({ message: "Product not in cart" });
+    if (!item) {
+      return res.status(404).json({ message: "Product not in cart" });
+    }
+
+    // Fetch product price from Product Service
+    const { data: product } = await axios.get(`${process.env.PRODUCT_SERVICE_URL}/${productId}`);
+    const unitPrice = parseFloat(product.price);
+
+    if (isNaN(unitPrice)) {
+      return res.status(400).json({ message: "Invalid product price from Product Service" });
+    }
 
     item.quantity = quantity;
+    item.price = parseFloat((unitPrice * quantity).toFixed(2)); // Update total price
+
     await cart.save();
 
-    res.status(200).json({ message: "Cart updated", cart });
+    res.status(200).json({ message: "Cart updated successfully", cart });
   } catch (error) {
     res.status(500).json({ message: "Error updating cart", error: error.message });
   }
 };
+
 
 
 // Clear Entire Cart
